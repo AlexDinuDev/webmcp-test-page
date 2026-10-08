@@ -107,3 +107,10 @@ button:hover {
 .log-list li.succeeded {
   color: #4ade80;
 }
+
+.version-footer{
+  text-align: center;
+  font-size: 0.75rem;
+  color: #0ee92b;
+  margin-top: 2rem;
+}

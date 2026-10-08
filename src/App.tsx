@@ -2,6 +2,7 @@ import { useState } from "react";
 import ContactForm from "./components/ContactForm";
 import WebMCPStatus from "./components/WebMCPStatus";
 import { useStartHereTool } from "./webmcp";
+import { APP_VERSION } from "./version";
 
 export default function App() {
   const [firstName, setFirstName] = useState("");
@@ -37,6 +38,7 @@ export default function App() {
       />
 
       <WebMCPStatus />
+      <footer className="version-footer">Version {APP_VERSION}</footer>
     </main>
   );
 }
