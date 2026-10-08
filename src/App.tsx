@@ -29,6 +29,7 @@ const initialFormData: FormData = {
   parkedAtAddress: "",
   purchasedLast90Days: "",
   drivewiseInterest: "",
+  buyingReason: "",
 };
 
 export default function App() {

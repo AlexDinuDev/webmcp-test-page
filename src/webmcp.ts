@@ -85,6 +85,7 @@ export interface StartHereArgs {
   parkedAtAddress?: "yes" | "no";
   purchasedLast90Days?: "yes" | "no";
   drivewiseInterest?: "yes" | "no";
+  buyingReason?: string;
 }
 
 interface StartHereHandlers {
@@ -122,7 +123,7 @@ const FIELD_DEFS: FieldDef[] = [
   {
     key: "consent",
     question:
-      "Do you consent to receive marketing communications about this quote? (required to proceed)",
+      "Do you consent to receive marketing communications from Allstate about this quote? (required to proceed)",
     options: ["yes", "no"],
   },
   { key: "ownership", question: "Do you own, finance, or lease the vehicle?", options: ["own", "finance", "lease"] },
@@ -137,6 +138,12 @@ const FIELD_DEFS: FieldDef[] = [
     options: ["yes", "no"],
   },
   { key: "drivewiseInterest", question: "Are you interested in Drivewise?", options: ["yes", "no"] },
+];
+
+// Optional fields: applied to form state when provided, but never required
+// and never reported as "missing".
+const OPTIONAL_FIELD_DEFS: FieldDef[] = [
+  { key: "buyingReason", question: "Why are you looking to buy insurance today?" },
 ];
 
 /**
@@ -163,7 +170,7 @@ export function useStartHereTool(handlers: StartHereHandlers): void {
 
       // Validate any supplied enum values before applying anything.
       const invalid: string[] = [];
-      for (const def of FIELD_DEFS) {
+      for (const def of [...FIELD_DEFS, ...OPTIONAL_FIELD_DEFS]) {
         const value = args[def.key];
         if (value === undefined || !def.options) continue;
         if (!def.options.includes(value)) {
@@ -178,7 +185,7 @@ export function useStartHereTool(handlers: StartHereHandlers): void {
 
       // Apply whatever fields were supplied in this call. Fields already
       // saved from a previous call are left untouched.
-      for (const def of FIELD_DEFS) {
+      for (const def of [...FIELD_DEFS, ...OPTIONAL_FIELD_DEFS]) {
         const value = args[def.key];
         if (value === undefined) continue;
         if (def.key === "consent") {
@@ -231,7 +238,8 @@ export function useStartHereTool(handlers: StartHereHandlers): void {
             "Populates the auto insurance quote form and submits it. Accepts partial input: any field you " +
             "don't know can be omitted, and the tool will report back exactly which fields still need to be " +
             "collected from the user. Call it again with just the newly collected answers once you have them " +
-            "— fields you already provided are saved between calls.",
+            "— fields you already provided are saved between calls. All fields are required except " +
+            "buyingReason, which is an optional open-ended question.",
           inputSchema: {
             type: "object",
             properties: {
@@ -273,7 +281,7 @@ export function useStartHereTool(handlers: StartHereHandlers): void {
               consent: {
                 type: "string",
                 enum: ["yes", "no"],
-                description: "Whether the user consents to receive marketing communications.",
+                description: "Whether the user consents to receive marketing communications from Allstate.",
               },
               ownership: {
                 type: "string",
@@ -294,6 +302,10 @@ export function useStartHereTool(handlers: StartHereHandlers): void {
                 type: "string",
                 enum: ["yes", "no"],
                 description: "Whether the user is interested in Drivewise.",
+              },
+              buyingReason: {
+                type: "string",
+                description: "Open-ended: why the user is looking to buy insurance today. Optional.",
               },
             },
             required: [

@@ -25,6 +25,7 @@ export interface FormData {
   parkedAtAddress: "" | "yes" | "no";
   purchasedLast90Days: "" | "yes" | "no";
   drivewiseInterest: "" | "yes" | "no";
+  buyingReason: string;
 }
 
 interface ContactFormProps {
@@ -46,13 +47,14 @@ interface TextFieldProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  required?: boolean;
 }
 
-function TextField({ id, label, type = "text", value, onChange, placeholder }: TextFieldProps) {
+function TextField({ id, label, type = "text", value, onChange, placeholder, required = true }: TextFieldProps) {
   return (
     <div className="field">
       <label htmlFor={id}>
-        {label} <span className="required-mark">*</span>
+        {label} {required && <span className="required-mark">*</span>}
       </label>
       <input
         id={id}
@@ -60,7 +62,7 @@ function TextField({ id, label, type = "text", value, onChange, placeholder }: T
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        required
+        required={required}
       />
     </div>
   );
@@ -190,7 +192,14 @@ export default function ContactForm({ formData, onFieldChange, onSubmit, lastCli
         />
         <label htmlFor="consent">
           By checking this box, I am providing express consent to receive marketing and/or promotional
-          communications. <span className="required-mark">*</span>
+          communications via calls and/or SMS and/or text messages from Allstate and/or Allstate affiliates at the
+          above phone number via autodialers, automated technology, and/or prerecorded or artificial voice messages.
+          I am providing this consent even if my number is previously registered on a Do Not Call Registry. I affirm
+          that I am the regular user of the number provided. I understand that my consent is not a condition of
+          purchase, that I can revoke my consent at any time, and texting STOP with no additional characters will
+          opt me out of texting. Message and data rates may apply and frequency varies. Please provide consent to
+          continue online. If you prefer, you can contact a licensed Allstate representative at 866-609-9400 to
+          complete your quote. <span className="required-mark">*</span>
         </label>
       </div>
 
@@ -228,6 +237,15 @@ export default function ContactForm({ formData, onFieldChange, onSubmit, lastCli
         value={formData.drivewiseInterest}
         onChange={(v) => onFieldChange("drivewiseInterest", v as FormData["drivewiseInterest"])}
         options={YES_NO_OPTIONS}
+      />
+
+      <TextField
+        id="buying-reason"
+        label="Why are you looking to buy insurance today?"
+        value={formData.buyingReason}
+        onChange={(v) => onFieldChange("buyingReason", v)}
+        placeholder="Optional — tell us a bit more"
+        required={false}
       />
 
       <button type="submit">
