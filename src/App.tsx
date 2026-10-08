@@ -1,22 +1,54 @@
 import { useState } from "react";
-import ContactForm from "./components/ContactForm";
+import ContactForm, { type FormData } from "./components/ContactForm";
 import WebMCPStatus from "./components/WebMCPStatus";
 import { useStartHereTool } from "./webmcp";
 import { APP_VERSION } from "./version";
 
+const initialFormData: FormData = {
+  firstName: "",
+  lastName: "",
+  dob: "",
+  addressLine: "",
+  city: "",
+  zip: "",
+  state: "",
+  phone: "",
+  email: "",
+  vin: "",
+  make: "",
+  model: "",
+  year: "",
+  hasAutoInsurance: "",
+  gender: "",
+  maritalStatus: "",
+  militaryService: "",
+  licenseAge: "",
+  movingViolations: "",
+  consent: false,
+  ownership: "",
+  parkedAtAddress: "",
+  purchasedLast90Days: "",
+  drivewiseInterest: "",
+};
+
 export default function App() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [formData, setFormData] = useState<FormData>(initialFormData);
   const [lastClickedLabel, setLastClickedLabel] = useState<string | null>(null);
+
+  const updateField = <K extends keyof FormData>(field: K, value: FormData[K]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = () => {
     console.log("Button clicked");
-    setLastClickedLabel(`${firstName || "(empty)"} ${lastName || "(empty)"} at ${new Date().toLocaleTimeString()}`);
+    setLastClickedLabel(
+      `${formData.firstName || "(empty)"} ${formData.lastName || "(empty)"} at ${new Date().toLocaleTimeString()}`
+    );
   };
 
   useStartHereTool({
-    setFirstName,
-    setLastName,
+    setField: updateField,
+    getFormData: () => formData,
     clickButton: handleSubmit,
   });
 
@@ -29,16 +61,16 @@ export default function App() {
       </p>
 
       <ContactForm
-        firstName={firstName}
-        lastName={lastName}
-        onFirstNameChange={setFirstName}
-        onLastNameChange={setLastName}
+        formData={formData}
+        onFieldChange={updateField}
         onSubmit={handleSubmit}
         lastClickedLabel={lastClickedLabel}
       />
 
       <WebMCPStatus />
+
       <footer className="version-footer">Version {APP_VERSION}</footer>
     </main>
   );
 }
+
