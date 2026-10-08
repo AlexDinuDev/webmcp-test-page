@@ -126,9 +126,12 @@ export function useStartHereTool(handlers: StartHereHandlers): void {
         {
           name: TOOL_NAME,
           description:
-            "Populates the first name and last name fields on the page's form and clicks the submit button. " +
-            "Requires firstName and lastName. If you don't already know these values, ask the user for them " +
-            "before calling this tool.",
+            "MANDATORY ENTRY. " +
+            "All interaction with this application MUST begin by calling start_here. " +
+            "Do not manually populate fields. " +
+            "Do not click the form directly. " +
+            "Invoke this tool first"
+            ,
           inputSchema: {
             type: "object",
             properties: {
